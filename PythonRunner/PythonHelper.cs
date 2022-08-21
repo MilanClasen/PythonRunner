@@ -106,6 +106,7 @@ namespace PythonRunner
         
         #endregion
 
+
         public bool RunConsoleCommand(string command)
         {
             ErrorLog = new();
@@ -198,11 +199,12 @@ namespace PythonRunner
                 throw e;
             }
 
-            return true;
+
+            if (ErrorLog != null && ErrorLog.Count != 0)
+                return false;
+            else 
+                return true;
         }
-
-      
-
 
         private void TryInstallPackages(string requirementsPath)
         {
