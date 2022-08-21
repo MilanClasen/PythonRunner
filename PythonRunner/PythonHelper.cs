@@ -62,6 +62,9 @@ namespace PythonRunner
 
             RegistryKey? pythonCore = startKey.OpenSubKey(key64) ?? startKey.OpenSubKey(key32);
 
+            if (pythonCore == null)
+                return "";
+
             var pythonKey = SearchPythonPathRecursive(pythonCore);
 
             if (pythonKey == null)
