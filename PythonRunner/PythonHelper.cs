@@ -159,8 +159,12 @@ namespace PythonRunner
             proc.Start();
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
+            proc.WaitForExit();
 
-            return true;
+            if (ErrorLog != null && ErrorLog.Count != 0)
+                return false;
+            else
+                return true;
         }
 
         
@@ -209,9 +213,10 @@ namespace PythonRunner
                 return true;
         }
 
-        private void TryInstallPackages(string requirementsPath)
+        public bool TryInstallPackages(string requirementsPath)
         {
-            RunConsoleCommand($"-m pip install -r \"{requirementsPath}\"");
+            bool success = RunConsoleCommand($"-m pip install -r \"{requirementsPath}\"");
+            return success ;
         }
 
         private void UpdateErrorLog(object sender, DataReceivedEventArgs e)
@@ -227,6 +232,22 @@ namespace PythonRunner
             if (e.Data != null)
             {
                 OutputLog.Add(e.Data);
+            }
+        }
+
+        public static bool TestPython(out string message)
+        {
+            string? path = FindPython();
+
+            if(path != null)
+            {
+                message = $"Python found at {path}.";
+                return true;
+            }
+            else
+            {
+                message = $"Could not locate Python.";
+                return false;
             }
         }
     }
