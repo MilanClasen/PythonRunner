@@ -60,17 +60,24 @@ namespace PythonRunner
             string key32 = @"SOFTWARE\Python";
             string key64 = @"SOFTWARE\Wow6432Node\Python";
 
-            RegistryKey? pythonCore = startKey.OpenSubKey(key64) ?? startKey.OpenSubKey(key32);
+            RegistryKey? pythonKey = null;
+            foreach (var key in new List<string>() { key32, key64 })
+            {
+                RegistryKey? pythonCore = startKey.OpenSubKey(key64) ?? startKey.OpenSubKey(key32);
 
-            if (pythonCore == null)
-                return "";
+                if (pythonCore == null)
+                    continue;
 
-            var pythonKey = SearchPythonPathRecursive(pythonCore);
+                pythonKey = SearchPythonPathRecursive(pythonCore);
+
+                if (pythonKey != null)
+                    break;
+            }
+
+
 
             if (pythonKey == null)
                 return "";
-
-     
             string pythonExePath = pythonKey.OpenSubKey("InstallPath").GetValue("ExecutablePath").ToString();
 
             return pythonExePath;
