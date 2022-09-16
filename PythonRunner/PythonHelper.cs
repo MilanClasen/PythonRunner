@@ -63,7 +63,7 @@ namespace PythonRunner
             RegistryKey? pythonKey = null;
             foreach (var key in new List<string>() { key32, key64 })
             {
-                RegistryKey? pythonCore = startKey.OpenSubKey(key64) ?? startKey.OpenSubKey(key32);
+                RegistryKey? pythonCore = startKey.OpenSubKey(key);
 
                 if (pythonCore == null)
                     continue;
