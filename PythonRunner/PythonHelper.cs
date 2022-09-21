@@ -167,7 +167,42 @@ namespace PythonRunner
                 return true;
         }
 
-        
+        public bool SetupEnviromentVariable()
+        {
+            //throw new NotImplementedException();
+
+            //Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Machine);
+            try
+            {
+                var pythonVariable = Path.GetDirectoryName(_pythonPath);
+
+                EnvironmentVariableTarget scope; // or User
+
+                bool inMachineVariables = false;
+                var machineVariablesString = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
+                if(machineVariablesString != null)
+                {
+                    var machineVariables = machineVariablesString.Split(';').ToList();
+                    inMachineVariables = machineVariables.Any(a => a == pythonVariable);
+                }
+
+                bool inUserVariables = false;
+                var userVariablesString = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.User);
+                if (userVariablesString != null)
+                {
+                    var userVariables = userVariablesString.Split(';').ToList();
+                    inUserVariables = userVariables.Any(a => a == pythonVariable);
+                }
+
+
+                
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         private bool RunWaitForExit(string command)
         {
