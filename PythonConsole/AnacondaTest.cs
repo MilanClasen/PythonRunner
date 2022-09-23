@@ -11,14 +11,17 @@ namespace PythonConsole
     {
         public static void RunTest()
         {
-            string pathScript = @"C:\Users\milan\source\repos\MilanClasen\PythonRunner\PythonConsole\Scripts\scikit_test.py";
+            string pathScript = @"Scripts\testNumpy.py";
 
             var ph = new PythonHelper()
             {
                 RunMode = RunMode.WaitForExit
             };
 
+            ph.RunConsoleCommand(pathScript, null);
             
+
+
         }
     }
 }

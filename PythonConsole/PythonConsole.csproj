@@ -25,4 +25,10 @@
     <ProjectReference Include="..\PythonRunner\PythonRunner.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Scripts\testNumpy.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

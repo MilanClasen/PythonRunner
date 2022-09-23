@@ -174,34 +174,53 @@ namespace PythonRunner
                 return true;
         }
 
-        public bool SetupEnviromentVariable()
+        public bool SetupEnviromentVariable(EnvironmentVariableTarget scope)
         {
-            //throw new NotImplementedException();
-
-            //Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Machine);
             try
             {
-                var pythonVariable = Path.GetDirectoryName(_pythonPath);
+                var pythonFolder = Path.GetDirectoryName(_pythonPath);
+                var requiredVars = new List<string>() { pythonFolder };
 
-                EnvironmentVariableTarget scope; // or User
-
-                bool inMachineVariables = false;
-                var machineVariablesString = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
-                if(machineVariablesString != null)
+                if (pythonFolder.ToLower().Contains("anaconda"))
                 {
-                    var machineVariables = machineVariablesString.Split(';').ToList();
-                    inMachineVariables = machineVariables.Any(a => a == pythonVariable);
+                    requiredVars.Add($@"{pythonFolder}\Scripts");
+                    requiredVars.Add($@"{pythonFolder}\Library\bin");
+                    requiredVars.Add($@"{pythonFolder}\Library\usr\bin");
+                    requiredVars.Add($@"{pythonFolder}\Library\mingw-w64\bin");
                 }
 
-                bool inUserVariables = false;
-                var userVariablesString = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.User);
-                if (userVariablesString != null)
+                string? oldVars = Environment.GetEnvironmentVariable("Path", scope);
+
+                if(oldVars == null)
                 {
-                    var userVariables = userVariablesString.Split(';').ToList();
-                    inUserVariables = userVariables.Any(a => a == pythonVariable);
+                    foreach (var v in requiredVars)
+                    {
+                        if (_hasConsole)
+                            Console.WriteLine($"Adding {v} to Path...");
+                    }
+                    Environment.SetEnvironmentVariable("Path", string.Join(";", requiredVars), scope);
                 }
+                else
+                {
+                    var currentVars = oldVars
+                        .Split(';').ToList()
+                        .Where(a => String.IsNullOrWhiteSpace(a) == false)
+                        .ToList();
+                    foreach (var v in requiredVars)
+                    {
+                        if(currentVars.Exists(a => a == v) == false)
+                        {
+                            currentVars.Add(v);
+                            Console.WriteLine($"Adding {v} to Path...");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Tried adding {v} to Path but it was already there...");
+                        }
+                    }
 
-
+                    Environment.SetEnvironmentVariable("Path", string.Join(";", currentVars), scope);
+                }
                 
                 return true;
             }
