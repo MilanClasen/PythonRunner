@@ -188,6 +188,10 @@ namespace PythonRunner
                     requiredVars.Add($@"{pythonFolder}\Library\usr\bin");
                     requiredVars.Add($@"{pythonFolder}\Library\mingw-w64\bin");
                 }
+                else
+                {
+                     requiredVars.Add($@"{pythonFolder}\Scripts");
+                }
 
                 string? oldVars = Environment.GetEnvironmentVariable("Path", scope);
 
