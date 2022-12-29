@@ -78,7 +78,11 @@ namespace PythonRunner
 
             if (pythonKey == null)
                 return "";
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             string pythonExePath = pythonKey.OpenSubKey("InstallPath").GetValue("ExecutablePath").ToString();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             return pythonExePath;
 
@@ -92,17 +96,21 @@ namespace PythonRunner
             {
                 var newKey = Key.OpenSubKey(subKeyName);
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 var installPathKey = newKey.OpenSubKey("InstallPath");
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 if (installPathKey != null)
                 {
                     var value = installPathKey.GetValue("ExecutablePath");
                     if (value != null)
                     {
                         string pythonExePath = value.ToString();
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                         if (pythonExePath.EndsWith("python.exe"))
                         {
                             return newKey;
                         }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     }
                 }
 
