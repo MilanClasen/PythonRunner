@@ -14,7 +14,7 @@ namespace PythonRunner
         private bool _hasConsole = false;
 
         public RunMode RunMode { get; set; } = RunMode.WaitForExit;
-        
+
         public DataReceivedEventHandler OnScriptPrint { get; set; }
         public DataReceivedEventHandler OnScriptError { get; set; }
         public EventHandler OnExit { get; set; }
@@ -121,7 +121,7 @@ namespace PythonRunner
 
             return null;
         }
-        
+
         #endregion
 
 
@@ -138,20 +138,29 @@ namespace PythonRunner
                     return RunProgressEvents(command);
                 default:
                     throw new Exception($"Unknown PythonHelper RunMode: {RunMode}.");
-            }         
+            }
         }
 
         public bool RunConsoleCommand(string script, params string[] arguments)
         {
             // See https://aka.ms/new-console-template for more information
 
-            string command = script + " ";
+            StringBuilder sb_command = new();
+            sb_command.Append(script);
+            sb_command.Append(" ");
+
             if (arguments != null && arguments.Length > 0)
             {
-                command += string.Join(" ", arguments);
+                foreach (var item in arguments)
+                {
+                    sb_command.Append("\"");
+                    sb_command.Append(item);
+                    sb_command.Append("\"");
+                    sb_command.Append(" ");
+                }
             }
 
-            return RunConsoleCommand(command);
+            return RunConsoleCommand(sb_command.ToString());
         }
 
         private bool RunProgressEvents(string command)
@@ -198,12 +207,12 @@ namespace PythonRunner
                 }
                 else
                 {
-                     requiredVars.Add($@"{pythonFolder}\Scripts");
+                    requiredVars.Add($@"{pythonFolder}\Scripts");
                 }
 
                 string? oldVars = Environment.GetEnvironmentVariable("Path", scope);
 
-                if(oldVars == null)
+                if (oldVars == null)
                 {
                     foreach (var v in requiredVars)
                     {
@@ -220,7 +229,7 @@ namespace PythonRunner
                         .ToList();
                     foreach (var v in requiredVars)
                     {
-                        if(currentVars.Exists(a => a == v) == false)
+                        if (currentVars.Exists(a => a == v) == false)
                         {
                             currentVars.Add(v);
                             Console.WriteLine($"Adding {v} to Path...");
@@ -233,7 +242,7 @@ namespace PythonRunner
 
                     Environment.SetEnvironmentVariable("Path", string.Join(";", currentVars), scope);
                 }
-                
+
                 return true;
             }
             catch
@@ -257,7 +266,7 @@ namespace PythonRunner
 
             try
             {
-                while(proc.StandardOutput.EndOfStream == false)
+                while (proc.StandardOutput.EndOfStream == false)
                 {
                     string? newOutput = proc.StandardOutput.ReadLine();
                     if (!String.IsNullOrWhiteSpace(newOutput))
@@ -282,14 +291,14 @@ namespace PythonRunner
 
             if (ErrorLog != null && ErrorLog.Count != 0)
                 return false;
-            else 
+            else
                 return true;
         }
 
         public bool TryInstallPackages(string requirementsPath)
         {
             bool success = RunConsoleCommand($"-m pip install -r \"{requirementsPath}\"");
-            return success ;
+            return success;
         }
 
         private void UpdateErrorLog(object sender, DataReceivedEventArgs e)
@@ -312,7 +321,7 @@ namespace PythonRunner
         {
             string? path = FindPython();
 
-            if(path != null)
+            if (path != null)
             {
                 message = $"Python found at {path}.";
                 return true;
