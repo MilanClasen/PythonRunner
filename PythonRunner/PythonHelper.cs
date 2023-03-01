@@ -50,7 +50,13 @@ namespace PythonRunner
                 pythonPath = SearchInRegistry(Registry.LocalMachine);
 
             if (pythonPath == null || pythonPath == "")
+                pythonPath = SearchInRegistry(Registry.Users);
+
+            if (pythonPath == null || pythonPath == "")
+            {
+                Console.WriteLine($"ERROR: Python installation is not found.");
                 throw new Exception("Python installation not found!");
+            }
 
             return pythonPath;
         }
@@ -73,8 +79,6 @@ namespace PythonRunner
                 if (pythonKey != null)
                     break;
             }
-
-
 
             if (pythonKey == null)
                 return "";
@@ -160,6 +164,7 @@ namespace PythonRunner
                 }
             }
 
+            Console.WriteLine("INFO: Calling Python...");
             return RunConsoleCommand(sb_command.ToString());
         }
 
@@ -293,6 +298,12 @@ namespace PythonRunner
                 return false;
             else
                 return true;
+        }
+
+        public bool TryUpdatePip()
+        {
+            bool success = RunConsoleCommand($"-m pip install --upgrade pip");
+            return success;
         }
 
         public bool TryInstallPackages(string requirementsPath)
