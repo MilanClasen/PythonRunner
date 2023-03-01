@@ -191,7 +191,10 @@ namespace PythonRunner
             proc.WaitForExit();
 
             if (ErrorLog != null && ErrorLog.Count != 0)
+            {
+                Console.WriteLine("ERROR: Could not run Python on ProgressEvents mode!" + string.Join("  \n", ErrorLog));
                 return false;
+            }
             else
                 return true;
         }
