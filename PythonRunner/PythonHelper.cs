@@ -192,7 +192,7 @@ namespace PythonRunner
 
             if (ErrorLog != null && ErrorLog.Count != 0)
             {
-                Console.WriteLine("ERROR: Could not run Python on ProgressEvents mode!" + string.Join("  \n", ErrorLog));
+                Console.WriteLine("WARNING: Could not run Python on ProgressEvents mode!\n  " + string.Join("; ", ErrorLog));
                 return false;
             }
             else
