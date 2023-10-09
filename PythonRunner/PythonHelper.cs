@@ -52,6 +52,9 @@ namespace PythonRunner
             if (pythonPath == null || pythonPath == "")
                 pythonPath = SearchInRegistry(Registry.Users);
 
+            //if (pythonPath == null || pythonPath == "")
+            //    pythonPath = SearchInRegistry(Registry.LocalMachine);
+
             if (pythonPath == null || pythonPath == "")
             {
                 Console.WriteLine($"ERROR: Python installation is not found.");
@@ -67,6 +70,7 @@ namespace PythonRunner
             string key64 = @"SOFTWARE\Wow6432Node\Python";
 
             RegistryKey? pythonKey = null;
+            string pythonExePath = null;
             foreach (var key in new List<string>() { key32, key64 })
             {
                 RegistryKey? pythonCore = startKey.OpenSubKey(key);
@@ -74,7 +78,7 @@ namespace PythonRunner
                 if (pythonCore == null)
                     continue;
 
-                pythonKey = SearchPythonPathRecursive(pythonCore);
+                pythonKey = SearchPythonPathRecursive(pythonCore, out pythonExePath);
 
                 if (pythonKey != null)
                     break;
@@ -82,17 +86,12 @@ namespace PythonRunner
 
             if (pythonKey == null)
                 return "";
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            string pythonExePath = pythonKey.OpenSubKey("InstallPath").GetValue("ExecutablePath").ToString();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-
+            
             return pythonExePath;
 
         }
 
-        private static RegistryKey SearchPythonPathRecursive(RegistryKey Key)
+        private static RegistryKey SearchPythonPathRecursive(RegistryKey Key, out string pythonInstallPath)
         {
             var subKeysNames = Key.GetSubKeyNames();
 
@@ -100,28 +99,43 @@ namespace PythonRunner
             {
                 var newKey = Key.OpenSubKey(subKeyName);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 var installPathKey = newKey.OpenSubKey("InstallPath");
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 if (installPathKey != null)
                 {
                     var value = installPathKey.GetValue("ExecutablePath");
+                    
                     if (value != null)
                     {
                         string pythonExePath = value.ToString();
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
                         if (pythonExePath.EndsWith("python.exe"))
                         {
+                            pythonInstallPath = pythonExePath;
                             return newKey;
                         }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     }
+
+                    try
+                    {
+                        value = installPathKey.GetValue(null);
+
+                        var folder = new DirectoryInfo(value.ToString());
+                        var pythonFile = folder.GetFiles().ToList().Find(a => a.FullName.EndsWith("python.exe"));
+                        if (pythonFile != null && pythonFile.Length > 0)
+                        {
+                            pythonInstallPath = pythonFile.FullName;
+                            return newKey;
+                        }
+                    }
+                    catch { }
                 }
 
-                RegistryKey nextKey = SearchPythonPathRecursive(newKey);
+                RegistryKey nextKey = SearchPythonPathRecursive(newKey, out pythonInstallPath);
                 if (nextKey != null)
                     return nextKey;
             }
+
+            pythonInstallPath = null;
 
             return null;
         }
