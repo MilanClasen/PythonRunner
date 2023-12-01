@@ -191,6 +191,7 @@ namespace PythonRunner
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.Arguments = command.Trim();
+            proc.StartInfo.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             proc.OutputDataReceived += UpdateOutputLog;
             proc.ErrorDataReceived += UpdateErrorLog;
@@ -282,6 +283,7 @@ namespace PythonRunner
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.Arguments = command.Trim();
+            proc.StartInfo.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             proc.Start();
             proc.WaitForExit();
