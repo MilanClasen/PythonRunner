@@ -10,7 +10,7 @@ namespace PythonRunner
 {
     public class PythonHelper
     {
-        private string _pythonPath;
+        private string? _pythonPath;
         private bool _hasConsole = false;
 
         public RunMode RunMode { get; set; } = RunMode.WaitForExit;
