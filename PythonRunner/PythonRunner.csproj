@@ -1,11 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>1.0.1</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MSScout\CheckForUpdates\CheckForUpdates.csproj" />
+  </ItemGroup>
 
 </Project>

@@ -1,8 +1,10 @@
-﻿using Microsoft.Win32;
+﻿using CheckForUpdates.Core;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +26,8 @@ namespace PythonRunner
 
         public PythonHelper()
         {
+            CheckAppVersion(GetAppVersion());
+
             _pythonPath = FindPython();
 
             OutputLog = new List<string>();
@@ -38,6 +42,38 @@ namespace PythonRunner
             {
                 _hasConsole = false;
             }
+        }
+
+        private string GetAppVersion()
+        {
+            try
+            {
+                string assemblyString = "ScoutPostProcessing";
+                Assembly assembly = Assembly.Load(assemblyString);
+                Version version = assembly.GetName().Version;
+                return version.Major + "." + version.Minor + "." + version.Build;
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
+        private void CheckAppVersion(string current_version)
+        {
+            ReadRelease info = new ReadRelease(current_version, "", "");
+
+            if (info.HasNewRelease())
+                throw new Exception("ERROR: Scout current version is not the latest release.");
+
+            List<CheckForUpdates.Model.ReleaseInfo> hists = info.history_releases(current_version);
+            if (hists.Count > 0)
+            {
+                CheckForUpdates.Model.ReleaseInfo hist = hists[0];
+                if (!hist.version.Equals(current_version))
+                    throw new Exception("ERROR: Scout current version is not the latest release.");
+            }
+            else
+                throw new Exception("ERROR: Unable to check for Scout updates. PythonHelper failed.");
         }
 
         #region RegistrySearch
