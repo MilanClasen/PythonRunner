@@ -63,17 +63,17 @@ namespace PythonRunner
             ReadRelease info = new ReadRelease(current_version, "", "");
 
             if (info.HasNewRelease())
-                throw new Exception("ERROR: Scout current version is not the latest release.");
+                throw new Exception("deprecated_version");
 
             List<CheckForUpdates.Model.ReleaseInfo> hists = info.history_releases(current_version);
             if (hists.Count > 0)
             {
                 CheckForUpdates.Model.ReleaseInfo hist = hists[0];
                 if (!hist.version.Equals(current_version))
-                    throw new Exception("ERROR: Scout current version is not the latest release.");
+                    throw new Exception("deprecated_version");
             }
             else
-                throw new Exception("ERROR: Unable to check for Scout updates. PythonHelper failed.");
+                throw new Exception("deprecated_version");
         }
 
         #region RegistrySearch
