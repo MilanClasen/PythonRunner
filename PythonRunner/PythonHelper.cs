@@ -358,6 +358,8 @@ namespace PythonRunner
         public bool TryUpdatePip()
         {
             bool success = RunConsoleCommand($"-m pip install --upgrade pip");
+            if (!success)
+                success = RunConsoleCommand($"-m ensurepip --upgrade");
             return success;
         }
 
