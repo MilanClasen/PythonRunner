@@ -26,11 +26,14 @@ namespace PythonRunner
 
         public PythonHelper()
         {
-            CheckAppVersion(GetAppVersion());
+            //CheckAppVersion(GetAppVersion());
+            string platform = System.Environment.OSVersion.Platform.ToString();
+            if (platform.Contains("Win"))
+                _pythonPath = FindPython();
+            else
+                _pythonPath = "python";
 
-            _pythonPath = FindPython();
-
-            OutputLog = new List<string>();
+                OutputLog = new List<string>();
             ErrorLog = new List<string>();
 
             try
