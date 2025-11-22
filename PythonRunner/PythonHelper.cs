@@ -24,14 +24,14 @@ namespace PythonRunner
         public List<string> OutputLog { get; private set; }
         public List<string> ErrorLog { get; private set; }
 
-        public PythonHelper()
+        public PythonHelper(string pythonPath = "python")
         {
             //CheckAppVersion(GetAppVersion());
             string platform = System.Environment.OSVersion.Platform.ToString();
             if (platform.Contains("Win"))
                 _pythonPath = FindPython();
             else
-                _pythonPath = "python";
+                _pythonPath = pythonPath;
 
                 OutputLog = new List<string>();
             ErrorLog = new List<string>();
