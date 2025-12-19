@@ -33,7 +33,7 @@ namespace PythonRunner
             else
                 _pythonPath = pythonPath;
 
-                OutputLog = new List<string>();
+            OutputLog = new List<string>();
             ErrorLog = new List<string>();
 
             try
@@ -91,9 +91,6 @@ namespace PythonRunner
             if (pythonPath == null || pythonPath == "")
                 pythonPath = SearchInRegistry(Registry.Users);
 
-            //if (pythonPath == null || pythonPath == "")
-            //    pythonPath = SearchInRegistry(Registry.LocalMachine);
-
             if (pythonPath == null || pythonPath == "")
             {
                 Console.WriteLine($"ERROR: Python installation is not found.");
@@ -125,7 +122,7 @@ namespace PythonRunner
 
             if (pythonKey == null)
                 return "";
-            
+
             return pythonExePath;
 
         }
@@ -142,12 +139,15 @@ namespace PythonRunner
                 if (installPathKey != null)
                 {
                     var value = installPathKey.GetValue("ExecutablePath");
-                    
+
                     if (value != null)
                     {
                         string pythonExePath = value.ToString();
 
-                        if (pythonExePath.EndsWith("python.exe"))
+                        if (
+                            pythonExePath.EndsWith("python.exe")
+                            && !pythonExePath.Contains("WindowsApps")
+                            )
                         {
                             pythonInstallPath = pythonExePath;
                             return newKey;
@@ -160,7 +160,11 @@ namespace PythonRunner
 
                         var folder = new DirectoryInfo(value.ToString());
                         var pythonFile = folder.GetFiles().ToList().Find(a => a.FullName.EndsWith("python.exe"));
-                        if (pythonFile != null && pythonFile.Length > 0)
+                        if (
+                            pythonFile != null &&
+                            pythonFile.Length > 0 &&
+                            !pythonFile.FullName.Contains("WindowsApps")
+                            )
                         {
                             pythonInstallPath = pythonFile.FullName;
                             return newKey;
