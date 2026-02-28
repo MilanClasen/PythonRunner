@@ -1,4 +1,4 @@
-﻿using CheckForUpdates.Core;
+﻿//using CheckForUpdates.Core;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -47,37 +47,37 @@ namespace PythonRunner
             }
         }
 
-        private string GetAppVersion()
-        {
-            try
-            {
-                string assemblyString = "ScoutPostProcessing";
-                Assembly assembly = Assembly.Load(assemblyString);
-                Version version = assembly.GetName().Version;
-                return version.Major + "." + version.Minor + "." + version.Build;
-            }
-            catch (Exception)
-            {
-                return "";
-            }
-        }
-        private void CheckAppVersion(string current_version)
-        {
-            ReadRelease info = new ReadRelease(current_version, "", "");
+        //private string GetAppVersion()
+        //{
+        //    try
+        //    {
+        //        string assemblyString = "ScoutPostProcessing";
+        //        Assembly assembly = Assembly.Load(assemblyString);
+        //        Version version = assembly.GetName().Version;
+        //        return version.Major + "." + version.Minor + "." + version.Build;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return "";
+        //    }
+        //}
+        //private void CheckAppVersion(string current_version)
+        //{
+        //    ReadRelease info = new ReadRelease(current_version, "", "");
 
-            if (info.HasNewRelease())
-                throw new Exception("deprecated_version");
+        //    if (info.HasNewRelease())
+        //        throw new Exception("deprecated_version");
 
-            List<CheckForUpdates.Model.ReleaseInfo> hists = info.history_releases(current_version);
-            if (hists.Count > 0)
-            {
-                CheckForUpdates.Model.ReleaseInfo hist = hists[0];
-                if (!hist.version.Equals(current_version))
-                    throw new Exception("deprecated_version");
-            }
-            else
-                throw new Exception("deprecated_version");
-        }
+        //    List<CheckForUpdates.Model.ReleaseInfo> hists = info.history_releases(current_version);
+        //    if (hists.Count > 0)
+        //    {
+        //        CheckForUpdates.Model.ReleaseInfo hist = hists[0];
+        //        if (!hist.version.Equals(current_version))
+        //            throw new Exception("deprecated_version");
+        //    }
+        //    else
+        //        throw new Exception("deprecated_version");
+        //}
 
         #region RegistrySearch
 
